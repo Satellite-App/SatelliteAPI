@@ -1,0 +1,46 @@
+name: Publish Container
+description: Create and publish a Docker image
+
+
+inputs:
+  service_name:
+    description: Service name
+    required: true
+  registry:
+    description: Registry URL
+    required: true
+  actor:
+    description: Username
+    required: true
+  version:
+    description: Container version
+    required: true
+  token:
+    description: GitHub Token
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3.3.0
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.actor }}
+        password: ${{ inputs.token }}
+  
+    - name: Build and push Docker image
+      id: push
+      uses: docker/build-push-action@v6.9.0
+      with:
+        context: ${{ inputs.service_name }}
+        push: true
+        tags: ${{ inputs.registry }}/satellite-app/${{ inputs.service_name }}:${{ inputs.version }}
+        labels: ${{ inputs.registry }}/satellite-app/${{ inputs.service_name }}:${{ inputs.version }}
+  
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v1.4.3
+      with:
+        subject-name: ${{ inputs.registry }}/satellite-app/${{ inputs.service_name }}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true

@@ -9,12 +9,13 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4.2.1
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: comnoco/create-release-action@v2.0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -33,5 +34,4 @@ jobs:
           service_name: auth
           registry: ghcr.io
           actor: ${{ github.actor }}
-        secrets:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ github.ref }}
