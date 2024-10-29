@@ -1,0 +1,37 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  publish-containers:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish auth service
+        uses: ./.github/actions/container/publish.yml
+        with:
+          service_name: auth
+          registry: ghcr.io
+          actor: ${{ github.actor }}
+        secrets:
+          token: ${{ secrets.GITHUB_TOKEN }}
