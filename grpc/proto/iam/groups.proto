@@ -1,0 +1,31 @@
+syntax = "proto3";
+package groups;
+
+import "google/protobuf/empty.proto";
+
+import "proto/iam/users.proto";
+
+service Groups {
+  rpc GetGroup(GroupName) returns (Group) {}
+  rpc GetGroups(google.protobuf.Empty) returns (GroupsList) {}
+  rpc CreateGroup(Group) returns (Group) {}
+  rpc UpdateGroup(Group) returns (Group) {}
+  rpc DeleteGroup(GroupName) returns (google.protobuf.Empty) {}
+}
+
+message GroupName {
+  string name = 1;
+}
+
+message Grants {
+ users.UserGrants user_grants = 1;
+}
+
+message Group {
+  string name  = 1;
+  Grants grants = 2;
+}
+
+message GroupsList {
+  repeated Group groups = 1;
+}

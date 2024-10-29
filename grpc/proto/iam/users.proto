@@ -1,0 +1,44 @@
+syntax = "proto3";
+package users;
+
+import "google/protobuf/empty.proto";
+
+service Users {
+  rpc GetUser(UserLogin) returns (User) {}
+  rpc GetUsers(google.protobuf.Empty) returns (UsersList) {}
+  rpc CreateUser(User) returns (User) {}
+  rpc UpdateUser(User) returns (User) {}
+  rpc UpdatePassword(UserLoginPassword) returns (google.protobuf.Empty) {}
+  rpc DeleteUser(UserLogin) returns (google.protobuf.Empty) {}
+}
+
+message UserLogin {
+  string login = 1;
+}
+
+message UserLoginPassword {
+  string login = 1;
+  string password = 2;
+}
+
+message User {
+  string login  = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string groups = 5;
+  string is_active = 6;
+  optional int64 telegram_id = 7;
+  string password = 8;
+}
+
+message UsersList {
+  repeated User users = 1;
+}
+
+message UserGrants {
+  bool edit_self = 1;
+  bool edit_all = 2;
+  bool read_self = 3;
+  bool read_all = 4;
+}

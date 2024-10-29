@@ -1,0 +1,26 @@
+syntax = "proto3";
+package auth;
+
+import "google/protobuf/empty.proto";
+import "proto/iam/users.proto";
+
+service Auth{
+  rpc GetUserToken(users.UserLoginPassword) returns (UserToken) {}
+  rpc RefreshUserToken(RefreshToken) returns (UserToken) {}
+  rpc DeleteUserToken(RefreshToken) returns (UserToken) {}
+  rpc CheckUserToken(UserToken) returns (google.protobuf.Empty) {}
+  rpc CheckBotToken(BotToken) returns (google.protobuf.Empty) {}
+}
+
+message UserToken {
+  string jwt_token = 2;
+}
+
+message RefreshToken {
+  string refresh_token = 1;
+}
+
+message BotToken {
+  string name = 1;
+  string token = 2;
+}
